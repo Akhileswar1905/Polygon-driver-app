@@ -23,9 +23,9 @@ const FormField = ({
   return (
     <View className={`h-[62px] space-y-2 ${otherStyles}`}>
       <Text className="text-black-100 font-pmedium text-base">{title}</Text>
-      <KeyboardAvoidingView className="flex-row w-full h-12 border-2 border-black-100 rounded-xl items-center">
+      <KeyboardAvoidingView className="flex-row w-full h-12  rounded-xl items-center border-b-2">
         <TextInput
-          className=" flex-1 text-base p-2"
+          className=" flex-1 text-base p-2 border-b-black-200"
           onChangeText={handleOnChangeText}
           keyboardType={keyBoardType}
           placeholder={placeHolder}
@@ -34,15 +34,15 @@ const FormField = ({
             (title === "OTP" || title === "Password") && !showPassword
           }
         ></TextInput>
-        {(title === "OTP" || title === "Password") && (
-          <TouchableOpacity onPress={() => setshowPassword(!showPassword)}>
-            <Image
-              source={showPassword ? icons.eye : icons.eyeHide}
-              className="w-6 h-6 m-2"
-            ></Image>
-          </TouchableOpacity>
-        )}
       </KeyboardAvoidingView>
+      {(title === "OTP" || title === "Password") && (
+        <TouchableOpacity onPress={() => setshowPassword(!showPassword)}>
+          <Image
+            source={showPassword ? icons.eye : icons.eyeHide}
+            className="w-6 h-6 m-2"
+          ></Image>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

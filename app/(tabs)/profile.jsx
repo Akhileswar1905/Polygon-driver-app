@@ -18,7 +18,6 @@ import axios from "axios";
 const Profile = () => {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
   const [driver, setDriver] = useState(null);
-  console.log("User: ", user);
   const fetchDetails = async () => {
     const phoneNumber = await AsyncStorage.getItem("phoneNumber");
     try {
@@ -108,8 +107,8 @@ const Profile = () => {
                 />
 
                 <Label
-                  title="Vehicle Number"
-                  value={driver?.vehicleNumber}
+                  title="Aadhar"
+                  value={driver?.Aadhar}
                   otherStyles={"mb-4"}
                 />
               </View>

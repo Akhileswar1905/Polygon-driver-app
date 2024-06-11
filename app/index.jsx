@@ -1,5 +1,4 @@
-import { Link, Redirect, router } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { Redirect, router } from "expo-router";
 import { Image, RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../components/CustomButton";
@@ -31,26 +30,24 @@ export default function App() {
           />
         }
       >
-        <View className="w-full m-h-[85vh] px-4 flex-1 items-center justify-center">
+        <View className="w-full m-h-[100vh] px-4 flex-1 items-center justify-center">
           {/* Logo */}
-          {/* <Text className="text-3xl font-psemibold">
-            Ahoy! <Text className="font-pregular">Driver</Text>
-          </Text> */}
+
+          <View className="flex w-full items-center justify-center">
+            <Image
+              source={images.logo_1}
+              className="w-[280px] h-[168px]"
+              resizeMode="contain"
+            />
+          </View>
 
           <Image
-            source={images.logo}
-            className="w-[140px] h-[84px]"
-            resizeMode="contain"
-          />
-
-          <Image
-            source={images.cards2}
-            className="w-[100%]"
-            resizeMode="contain"
+            source={images.cover}
+            className="w-[400px] h-[400px] mt-4"
           ></Image>
           <CustomButton
             title={"Click to Continue"}
-            btnStyles={"w-full "}
+            btnStyles={"w-full mt-7"}
             handleOnPress={() => router.push("/login")}
           />
         </View>

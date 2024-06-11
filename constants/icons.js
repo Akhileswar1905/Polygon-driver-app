@@ -14,6 +14,7 @@ import play from "../assets/icons/play.png";
 import car from "../assets/icons/car.png";
 import cash from "../assets/icons/cash.png";
 import Taxi from "../assets/icons/Taxi.png";
+import filter from "../assets/icons/filter.png";
 export default {
   play,
   bookmark,
@@ -31,4 +32,5 @@ export default {
   car,
   cash,
   Taxi,
+  filter,
 };

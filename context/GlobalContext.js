@@ -14,8 +14,9 @@ const GlobalProvider = ({ children }) => {
     const getUser = async () => {
       try {
         const phoneNumber = await AsyncStorage.getItem("phoneNumber");
+        const verified = await AsyncStorage.getItem("verified");
         console.log("Phone Number: ", phoneNumber);
-        if (phoneNumber) {
+        if (phoneNumber && verified === "true") {
           const res = await axios.get(
             `https://polygon-project.onrender.com/driver/${phoneNumber}`
           );

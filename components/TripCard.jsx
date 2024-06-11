@@ -9,16 +9,14 @@ const TripCard = ({ trip, otherStyles }) => {
       className={`${otherStyles}  m-3 rounded-xl bg-[#eee0e0] shadow-lg shadow-black-200/40`}
     >
       <View className="w-full gap-4 items-center flex-row justify-start px-3 py-2">
-        <Image source={icons.Taxi} className="w-[43px]" />
-        <Text className="text-xl font-pmedium">{tripID}</Text>
+        <Image source={icons.Taxi} className="w-[33px]" />
+        <Text className="text-lg font-pmedium">{tripID}</Text>
       </View>
-      <View className="w-full gap-5 items-center flex-row justify-between p-3">
+      <View className="w-full gap-5 items-center flex-row justify-between px-3 pb-1">
         <View>
-          <Text className="text-xl font-pmedium text-gray-600">Area</Text>
-          <Text className="text-2xl font-psemibold">{tripTime}</Text>
-          <Text className="text-xl font-pmedium text-gray-600">{tripDate}</Text>
+          <Text className="text-xl font-psemibold">{tripTime}</Text>
+          <Text className="text-lg font-pmedium text-gray-600">{tripDate}</Text>
         </View>
-        <Image source={images.location} className="w-[200px] h-[120px]" />
       </View>
     </View>
   );

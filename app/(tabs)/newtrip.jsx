@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Alert } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
@@ -21,40 +21,76 @@ const NewTrip = () => {
   const formattedTime = `${hours}:${minutes}:${seconds}`;
 
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [contractId, setContractId] = useState("");
+  const [payPerRide, setPayPerRide] = useState("");
+
+  const [trip, setTrip] = useState({
+    tripId: "",
+    tripDate: formattedDate,
+    tripTime: formattedTime,
+    contractId: "",
+    phoneNumber: "",
+  });
 
   useEffect(() => {
     const getUser = async () => {
-      const phoneNumber = await AsyncStorage.getItem("phoneNumber");
+      const ph = await AsyncStorage.getItem("phoneNumber");
+      setPhoneNumber(ph);
       try {
         const res = await axios.get(
-          `https://polygon-project.onrender.com/driver/${phoneNumber}`
+          `https://polygon-project.onrender.com/driver/${ph}`
         );
         setUser(res.data);
+        if (res.data.contractDetails.length === 0) {
+          setLoading(true);
+        } else {
+          const latestContractId =
+            res.data.contractDetails[res.data.contractDetails.length - 1]
+              .companyId;
+          const pay =
+            res.data.contractDetails[res.data.contractDetails.length - 1]
+              .payPerRide;
+          setContractId(latestContractId);
+          setPayPerRide(pay);
+          setTrip((prevTrip) => ({
+            ...prevTrip,
+            contractId: latestContractId,
+            phoneNumber: ph,
+            payPerRide: pay,
+          }));
+          console.log(trip);
+        }
       } catch (error) {
         console.log(error.message);
       }
     };
     getUser();
-  });
-
-  const [loading, setLoading] = useState(false);
-  if (user?.contractDetails.length === 0) setLoading(true);
-  const currentContract =
-    user?.contractDetails[user?.contractDetails.length - 1].contractId;
-  const [trip, setTrip] = useState({
-    tripId: "",
-    tripDate: formattedDate,
-    tripTime: formattedTime,
-    contractId: currentContract,
-    phoneNumber: user?.phoneNumber,
-  });
-  console.log(trip);
+  }, []);
 
   const handlePress = async () => {
     try {
+      if (trip.tripId === "") {
+        Alert.alert("Error", "Please fill all the fields");
+        return;
+      }
+
+      const updatedTrip = {
+        ...trip,
+        tripDate: formattedDate,
+        tripTime: formattedTime,
+        contractId: contractId,
+        phoneNumber: phoneNumber,
+        payPerRide: payPerRide,
+      };
+
+      setLoading(true);
+      console.log("trip:", updatedTrip);
+
       const res = await axios.put(
         "https://polygon-project.onrender.com/driver/trip",
-        trip
+        updatedTrip
       );
       if (res.status === 200) {
         Alert.alert("Success", "Trip added successfully");
@@ -62,12 +98,16 @@ const NewTrip = () => {
           tripId: "",
           tripDate: formattedDate,
           tripTime: formattedTime,
-          contractId: currentContract,
-          phoneNumber: user.phoneNumber,
+          contractId: contractId,
+          phoneNumber: phoneNumber,
+          payPerRide: payPerRide,
         });
         router.push("/trips");
       }
+
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       Alert.alert("Error", error.message);
       console.log(error);
     }
@@ -89,7 +129,7 @@ const NewTrip = () => {
           <CustomButton
             title={"Add Trip"}
             btnStyles={"mt-7"}
-            handleOnPress={() => handlePress()}
+            handleOnPress={handlePress}
             onLoading={loading}
           />
         </View>

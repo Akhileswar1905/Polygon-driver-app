@@ -1,31 +1,22 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Image,
-  FlatList,
-  RefreshControl,
-} from "react-native";
+import { View, Text, ScrollView, Image, RefreshControl } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
-import { useGlobalContext } from "../../context/GlobalContext";
 import { BarChart, LineChart } from "react-native-gifted-charts";
 
 const data = [
-  { value: 50, label: "Jan" },
-  { value: 80, label: "Feb" },
-  { value: 90, label: "March" },
-  { value: 70, label: "Apr" },
-  { value: 30, label: "May" },
-  { value: 40, label: "June" },
+  { value: 0, label: "Jan" },
+  { value: 0, label: "Feb" },
+  { value: 0, label: "March" },
+  { value: 0, label: "Apr" },
+  { value: 0, label: "May" },
+  { value: 0, label: "June" },
 ];
 
 const Home = () => {
   const [rides, setRides] = useState(null);
-  const { user } = useGlobalContext();
   return (
-    <SafeAreaView className="w-full h-full">
+    <SafeAreaView className="w-full h-full ">
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={false} onRefresh={() => setRides(null)} />
