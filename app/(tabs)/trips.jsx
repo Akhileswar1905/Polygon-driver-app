@@ -11,15 +11,17 @@ import {
   StyleSheet,
   RefreshControl,
   FlatList,
+  Button,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { icons, images } from "../../constants";
 import CustomButton from "../../components/CustomButton";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { useGlobalContext } from "../../context/GlobalContext";
 import axios from "axios";
 import TripCard from "../../components/TripCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const Trips = () => {
   const { user } = useGlobalContext();
@@ -30,11 +32,16 @@ const Trips = () => {
   const [start, setStart] = useState(null);
   const [end, setEnd] = useState(null);
   const [show, setShow] = useState(false);
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
   const [modalOpacity] = useState(new Animated.Value(0)); // For fade animation
-  // const [data, setDate] = useState([]);
+
   const fetchDetails = async () => {
     try {
       const phoneNumber = await AsyncStorage.getItem("phoneNumber");
+      if (!phoneNumber) {
+        <Redirect href={"/"} />;
+      }
       if (phoneNumber) {
         const res = await axios.get(
           `https://polygon-project.onrender.com/driver/${phoneNumber}`
@@ -56,13 +63,22 @@ const Trips = () => {
   }, []);
 
   const onFilter = () => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-    const filtrips = trips.filter((trip) => {
-      const date = new Date(trip.tripDate);
-      return date >= startDate && date <= endDate;
-    });
-    setFilteredTrips(filtrips);
+    const startDate = new Date(start ? formatDate(start) : "");
+    const endDate = new Date(end ? formatDate(end) : "");
+    if (!start || !end) {
+      setFilteredTrips(trips);
+    } else {
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        alert("Please enter valid dates");
+        return;
+      } else {
+        const filtrips = trips.filter((trip) => {
+          const date = new Date(trip.tripDate);
+          return date >= startDate && date <= endDate;
+        });
+        setFilteredTrips(filtrips);
+      }
+    }
     setStart(null);
     setEnd(null);
     setShow(false);
@@ -71,8 +87,6 @@ const Trips = () => {
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchDetails();
-    setStart("");
-    setEnd("");
     setRefreshing(false);
   };
 
@@ -83,6 +97,19 @@ const Trips = () => {
       duration: 300,
       useNativeDriver: true,
     }).start();
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    let day = d.getDate();
+    let month = d.getMonth() + 1; // Months are zero-based
+    const year = d.getFullYear();
+
+    if (day < 10) day = `0${day}`;
+    if (month < 10) month = `0${month}`;
+
+    return `${day}-${month}-${year}`;
   };
 
   return (
@@ -115,7 +142,6 @@ const Trips = () => {
           <View className="flex flex-row justify-between items-center p-3">
             <Text className="text-2xl font-psemibold text-center">Trips</Text>
             <TouchableOpacity onPress={toggleModal}>
-              {/* <Text style={styles.filterButton}>Filter</Text> */}
               <Image
                 source={icons.filter}
                 className="w-6 h-6"
@@ -135,18 +161,40 @@ const Trips = () => {
                   <Text style={styles.modalTitle}>Trips</Text>
                   <Text style={styles.filterText}>Filter Trips by Date</Text>
                   <View style={styles.dateInputContainer}>
-                    <TextInput
+                    <TouchableOpacity
+                      onPress={() => setShowStartPicker(true)}
                       style={styles.dateInput}
-                      placeholder="From"
-                      onChangeText={(text) => setStart(text)}
-                      value={start}
-                    />
-                    <TextInput
+                    >
+                      <Text>{start ? formatDate(start) : "From"}</Text>
+                    </TouchableOpacity>
+                    {showStartPicker && (
+                      <DateTimePicker
+                        value={start || new Date()}
+                        mode="date"
+                        display="default"
+                        onChange={(event, selectedDate) => {
+                          setShowStartPicker(false);
+                          setStart(selectedDate);
+                        }}
+                      />
+                    )}
+                    <TouchableOpacity
+                      onPress={() => setShowEndPicker(true)}
                       style={styles.dateInput}
-                      placeholder="To"
-                      onChangeText={(text) => setEnd(text)}
-                      value={end}
-                    />
+                    >
+                      <Text>{end ? formatDate(end) : "To"}</Text>
+                    </TouchableOpacity>
+                    {showEndPicker && (
+                      <DateTimePicker
+                        value={end || new Date()}
+                        mode="date"
+                        display="default"
+                        onChange={(event, selectedDate) => {
+                          setShowEndPicker(false);
+                          setEnd(selectedDate);
+                        }}
+                      />
+                    )}
                   </View>
                   <CustomButton
                     title={"Filter"}
@@ -214,8 +262,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "gray",
     borderRadius: 5,
-    paddingHorizontal: 10,
+    padding: 10,
     marginRight: 10,
+    justifyContent: "center", // Center text vertically
   },
   filterButtonStyle: {
     width: "40%",

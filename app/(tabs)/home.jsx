@@ -2,24 +2,46 @@ import { View, Text, ScrollView, Image, RefreshControl } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
-import { BarChart, LineChart } from "react-native-gifted-charts";
-
-const data = [
-  { value: 0, label: "Jan" },
-  { value: 0, label: "Feb" },
-  { value: 0, label: "March" },
-  { value: 0, label: "Apr" },
-  { value: 0, label: "May" },
-  { value: 0, label: "June" },
-];
+import { BarChart } from "react-native-gifted-charts";
+import { formatTripsAndEarnings, getUser } from "../../lib/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Redirect } from "expo-router";
 
 const Home = () => {
-  const [rides, setRides] = useState(null);
+  const [rides, setRides] = useState([]);
+  const [earnings, setEarnings] = useState([]);
+  const [trips, setTrips] = useState(null);
+  const fetchUser = async () => {
+    const ph = await AsyncStorage.getItem("phoneNumber");
+    if (!ph) {
+      <Redirect href={"/"} />;
+    }
+    const res = await getUser(ph);
+    const { formattedTrips, formattedEarnings } = formatTripsAndEarnings(
+      res.tripDetails,
+      res.earnings
+    );
+
+    if (formattedTrips.length > 0) {
+      setEarnings(formattedEarnings);
+      setRides(formattedTrips);
+    }
+  };
+  useEffect(() => {
+    setTrips(null);
+    fetchUser();
+  }, []);
+
+  console.log(rides);
+
   return (
     <SafeAreaView className="w-full h-full ">
       <ScrollView
         refreshControl={
-          <RefreshControl refreshing={false} onRefresh={() => setRides(null)} />
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => setRides(fetchUser)}
+          />
         }
       >
         <View className="w-full px-6 my-6 space-y-2 justify-between flex-row items-center">
@@ -35,21 +57,28 @@ const Home = () => {
         </View>
 
         <View className="my-5 flex items-center justify-center">
-          {rides ? (
-            <Text className="font-psemibold text-xl">Rides: {rides.value}</Text>
+          {trips ? (
+            <Text className="font-psemibold text-xl">
+              Earning: {trips.value}
+            </Text>
           ) : null}
           <BarChart
             frontColor={`#1171ba`}
             barBorderRadius={5}
             barMarginBottom={5}
-            data={data}
+            data={earnings}
             onPress={(value) => {
-              setRides(value);
+              setTrips(value);
             }}
           />
         </View>
-        <View className="my-7 flex items-center justify-center ">
-          <LineChart data={data} color1="#1171ba" />
+        <View>
+          <BarChart
+            data={rides}
+            frontColor={`#1171ba`}
+            barBorderRadius={5}
+            barMarginBottom={5}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

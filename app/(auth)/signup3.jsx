@@ -39,7 +39,7 @@ const SignUp3 = () => {
 
   // Files uploading to the app
   const openPicker = async (selectType, name) => {
-    const res = await DocumentPicker.getDocumentAsync();
+    const res = await DocumentPicker.getDocumentAsync("*/*");
 
     console.log(name, res.assets[0]);
 
@@ -94,6 +94,7 @@ const SignUp3 = () => {
       PAN: form.PAN,
       IFSC: form.IFSC,
       AccNumber: form.AccNumber,
+      vehicleNumber: form.VehicleNumber,
       vehicleRC: form.vehicleRC,
       DrivingLicense: form.DrivingLicense,
       vehiclePhotos: form.vehiclePhotos,

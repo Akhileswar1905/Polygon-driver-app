@@ -12,6 +12,7 @@ import eyeHide from "../assets/icons/eye-hide.png";
 import eye from "../assets/icons/eye.png";
 import play from "../assets/icons/play.png";
 import car from "../assets/icons/car.png";
+import card from "../assets/icons/card.png";
 import cash from "../assets/icons/cash.png";
 import Taxi from "../assets/icons/Taxi.png";
 import filter from "../assets/icons/filter.png";
@@ -30,6 +31,7 @@ export default {
   eyeHide,
   eye,
   car,
+  card,
   cash,
   Taxi,
   filter,

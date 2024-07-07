@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   RefreshControl,
+  BackHandler,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,7 +13,7 @@ import { icons, images } from "../../constants";
 import Label from "../../components/Label";
 import { useGlobalContext } from "../../context/GlobalContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import axios from "axios";
 
 const Profile = () => {
@@ -20,6 +21,9 @@ const Profile = () => {
   const [driver, setDriver] = useState(null);
   const fetchDetails = async () => {
     const phoneNumber = await AsyncStorage.getItem("phoneNumber");
+    if (!phoneNumber) {
+      <Redirect href={"/"} />;
+    }
     try {
       const res = await axios.get(
         `https://polygon-project.onrender.com/driver/${phoneNumber}`
@@ -42,7 +46,8 @@ const Profile = () => {
     console.log("Logged out");
     setUser(null);
     setIsLoggedIn(false);
-    router.push("/");
+    // router.push("/");
+    BackHandler.exitApp();
   };
 
   return (

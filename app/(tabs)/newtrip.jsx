@@ -1,35 +1,47 @@
-import { View, Text, ScrollView, Alert } from "react-native";
+import { View, Text, ScrollView, Alert, Platform } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
 import axios from "axios";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const NewTrip = () => {
   const currentDate = new Date();
+  const yesterday = new Date(currentDate);
+  yesterday.setDate(currentDate.getDate() - 1);
+  const dayBeforeYesterday = new Date(currentDate);
+  dayBeforeYesterday.setDate(currentDate.getDate() - 2);
 
-  const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-  const day = String(currentDate.getDate()).padStart(2, "0");
-  const hours = String(currentDate.getHours()).padStart(2, "0");
-  const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-  const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${day}-${month}-${year}`;
+  };
 
-  const formattedDate = `${day}-${month}-${year}`;
-  const formattedTime = `${hours}:${minutes}:${seconds}`;
+  const formatTime = (date) => {
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [contractId, setContractId] = useState("");
   const [payPerRide, setPayPerRide] = useState("");
+  const [tripDate, setTripDate] = useState(currentDate);
+  const [tripTime, setTripTime] = useState(currentDate);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   const [trip, setTrip] = useState({
     tripId: "",
-    tripDate: formattedDate,
-    tripTime: formattedTime,
+    tripDate: formatDate(currentDate),
+    tripTime: formatTime(currentDate),
     contractId: "",
     phoneNumber: "",
   });
@@ -37,6 +49,9 @@ const NewTrip = () => {
   useEffect(() => {
     const getUser = async () => {
       const ph = await AsyncStorage.getItem("phoneNumber");
+      if (!ph) {
+        <Redirect href={"/"} />;
+      }
       setPhoneNumber(ph);
       try {
         const res = await axios.get(
@@ -60,7 +75,6 @@ const NewTrip = () => {
             phoneNumber: ph,
             payPerRide: pay,
           }));
-          console.log(trip);
         }
       } catch (error) {
         console.log(error.message);
@@ -78,8 +92,8 @@ const NewTrip = () => {
 
       const updatedTrip = {
         ...trip,
-        tripDate: formattedDate,
-        tripTime: formattedTime,
+        tripDate: formatDate(tripDate),
+        tripTime: formatTime(tripTime),
         contractId: contractId,
         phoneNumber: phoneNumber,
         payPerRide: payPerRide,
@@ -96,8 +110,8 @@ const NewTrip = () => {
         Alert.alert("Success", "Trip added successfully");
         setTrip({
           tripId: "",
-          tripDate: formattedDate,
-          tripTime: formattedTime,
+          tripDate: formatDate(currentDate),
+          tripTime: formatTime(currentDate),
           contractId: contractId,
           phoneNumber: phoneNumber,
           payPerRide: payPerRide,
@@ -113,11 +127,61 @@ const NewTrip = () => {
     }
   };
 
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || tripDate;
+    setShowDatePicker(Platform.OS === "ios");
+    setTripDate(currentDate);
+  };
+
+  const handleTimeChange = (event, selectedTime) => {
+    const currentTime = selectedTime || tripTime;
+    setShowTimePicker(Platform.OS === "ios");
+    setTripTime(currentTime);
+  };
+
   return (
     <SafeAreaView className="h-full">
       <ScrollView>
         <View className="w-full min-h-[85vh] justify-center my-6 px-4">
           <Text className="text-3xl font-semibold">New Trip</Text>
+
+          <Text className="mt-7 text-black-100 font-pmedium text-base">
+            Select Trip Date:
+          </Text>
+          <CustomButton
+            title={formatDate(tripDate)}
+            btnStyles={"mt-7 bg-transparent  border"}
+            textStyles={"text-black"}
+            handleOnPress={() => setShowDatePicker(true)}
+          />
+          {showDatePicker && (
+            <DateTimePicker
+              value={tripDate}
+              mode="date"
+              display="default"
+              maximumDate={currentDate}
+              minimumDate={dayBeforeYesterday}
+              onChange={handleDateChange}
+            />
+          )}
+
+          <Text className="mt-7 text-black-100 font-pmedium text-base">
+            Select Trip Time:
+          </Text>
+          <CustomButton
+            title={formatTime(tripTime)}
+            btnStyles={"mt-7 bg-transparent  border"}
+            textStyles={"text-black"}
+            handleOnPress={() => setShowTimePicker(true)}
+          />
+          {showTimePicker && (
+            <DateTimePicker
+              value={tripTime}
+              mode="time"
+              display="default"
+              onChange={handleTimeChange}
+            />
+          )}
 
           <FormField
             title={"Enter the Trip ID"}
