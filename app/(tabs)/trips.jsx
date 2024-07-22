@@ -24,7 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 const Trips = () => {
-  const { user } = useGlobalContext();
+  const [user, setUser] = useState(null);
   const [trips, setTrips] = useState([]);
   const [filteredTrips, setFilteredTrips] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -46,6 +46,7 @@ const Trips = () => {
         const res = await axios.get(
           `https://polygon-project.onrender.com/driver/${phoneNumber}`
         );
+        setUser(res.data.controlPanel);
         setTrips(res.data.tripDetails || []);
         setFilteredTrips(res.data.tripDetails || []);
         setCompany(
@@ -79,10 +80,12 @@ const Trips = () => {
         setFilteredTrips(filtrips);
       }
     }
+    setUser(null);
     setStart(null);
     setEnd(null);
     setShow(false);
   };
+  // console.log(user);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -213,7 +216,7 @@ const Trips = () => {
             data={filteredTrips}
             keyExtractor={(trip) => trip.tripID || trip.tripId} // Adjust based on your data
             renderItem={({ item }) => (
-              <TripCard otherStyles={"mt-5"} trip={item} />
+              <TripCard otherStyles={"mt-5"} trip={{ item, user }} />
             )}
           />
         </>

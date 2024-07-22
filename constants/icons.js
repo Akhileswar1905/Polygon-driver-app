@@ -16,6 +16,7 @@ import card from "../assets/icons/card.png";
 import cash from "../assets/icons/cash.png";
 import Taxi from "../assets/icons/Taxi.png";
 import filter from "../assets/icons/filter.png";
+import edit from "../assets/icons/edit.png";
 export default {
   play,
   bookmark,
@@ -35,4 +36,5 @@ export default {
   cash,
   Taxi,
   filter,
+  edit,
 };

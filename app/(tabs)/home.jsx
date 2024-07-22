@@ -66,7 +66,7 @@ const Home = () => {
             frontColor={`#1171ba`}
             barBorderRadius={5}
             barMarginBottom={5}
-            data={earnings}
+            data={earnings ? earnings : []}
             onPress={(value) => {
               setTrips(value);
             }}
@@ -74,7 +74,7 @@ const Home = () => {
         </View>
         <View>
           <BarChart
-            data={rides}
+            data={rides ? rides : []}
             frontColor={`#1171ba`}
             barBorderRadius={5}
             barMarginBottom={5}
