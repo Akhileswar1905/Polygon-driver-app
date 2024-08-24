@@ -95,7 +95,7 @@ const SignUp3 = () => {
     const ref = storageRef(storage, `uploads/${file.name}`);
 
     return new Promise((resolve, reject) => {
-      const uploadTask = uploadBytesResumable(ref, blob);
+      const uploadTask = uploadBytesResumable(ref, file);
       uploadTask.on(
         "state_changed",
         (snapshot) => {
