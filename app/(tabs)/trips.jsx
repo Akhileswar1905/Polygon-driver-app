@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -22,6 +22,7 @@ import axios from "axios";
 import TripCard from "../../components/TripCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Trips = () => {
   const [user, setUser] = useState(null);
@@ -59,9 +60,11 @@ const Trips = () => {
     }
   };
 
-  useEffect(() => {
-    fetchDetails();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchDetails();
+    }, [])
+  );
 
   const onFilter = () => {
     const startDate = new Date(start ? formatDate(start) : "");
@@ -85,7 +88,6 @@ const Trips = () => {
     setEnd(null);
     setShow(false);
   };
-  // console.log(user);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -106,7 +108,7 @@ const Trips = () => {
     if (!date) return "";
     const d = new Date(date);
     let day = d.getDate();
-    let month = d.getMonth() + 1; // Months are zero-based
+    let month = d.getMonth() + 1;
     const year = d.getFullYear();
 
     if (day < 10) day = `0${day}`;

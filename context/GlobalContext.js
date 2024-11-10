@@ -15,12 +15,10 @@ const GlobalProvider = ({ children }) => {
       try {
         const phoneNumber = await AsyncStorage.getItem("phoneNumber");
         const verified = await AsyncStorage.getItem("verified");
-        console.log("Phone Number: ", phoneNumber);
         if (phoneNumber && verified === "true") {
           const res = await axios.get(
             `https://polygon-project.onrender.com/driver/${phoneNumber}`
           );
-          console.log(res.data.driver);
           setUser(res.data.driver);
           setIsLoggedIn(true);
         } else {

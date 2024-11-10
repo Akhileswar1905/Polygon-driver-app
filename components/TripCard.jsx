@@ -22,11 +22,12 @@ const TripCard = ({ trip, otherStyles }) => {
     tripDate: tripDate,
     phoneNumber: phoneNumber,
   });
+  const [filled, setFilled] = useState(false);
 
   const handleEdit = async () => {
     try {
       console.log("Handle Edit");
-
+      setFilled(true);
       const res = await axios.post(
         "https://polygon-project.onrender.com/driver/update-trip",
         updatedTrip
@@ -87,7 +88,7 @@ const TripCard = ({ trip, otherStyles }) => {
         <View>
           <Text style={styles.tripTime}>{updatedTrip.tripTime}</Text>
           <Text style={styles.tripDate}>{updatedTrip.tripDate}</Text>
-          {trip.item.status === "allowed" && (
+          {trip.item.status === "allowed" && !filled && (
             <Text className="text-green-600">Edit Access is allowed</Text>
           )}
         </View>

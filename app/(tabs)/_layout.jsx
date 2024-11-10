@@ -1,7 +1,6 @@
 import { View, Text, Image } from "react-native";
-import { Tabs, Redirect, SplashScreen } from "expo-router";
+import { Tabs } from "expo-router";
 import { icons } from "../../constants";
-import { FontAwesome } from "@expo/vector-icons/FontAwesome";
 const TabLayout = () => {
   const TabIcon = ({ focused, color, icon, name }) => {
     return (
@@ -30,9 +29,9 @@ const TabLayout = () => {
           tabBarInactiveTintColor: "#9e9ea3",
           tabBarStyle: {
             backgroundColor: "white",
-            padding: 4,
+            padding: "3rem",
             borderTopWidth: 0,
-            elevation: 2,
+            elevation: 1,
             shadowOpacity: 0,
             shadowOffset: {
               height: 3,

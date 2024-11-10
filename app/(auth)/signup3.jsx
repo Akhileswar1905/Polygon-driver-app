@@ -94,7 +94,7 @@ const SignUp3 = () => {
       PAN: form.PAN,
       IFSC: form.IFSC,
       AccNumber: form.AccNumber,
-      vehicleNumber: form.VehicleNumber,
+      vehicleNumber: form.vehicleNumber,
       vehicleRC: form.vehicleRC,
       DrivingLicense: form.DrivingLicense,
       vehiclePhotos: form.vehiclePhotos,

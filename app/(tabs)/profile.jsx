@@ -46,7 +46,7 @@ const Profile = () => {
     console.log("Logged out");
     setUser(null);
     setIsLoggedIn(false);
-    // router.push("/");
+    router.push("/");
     BackHandler.exitApp();
   };
 
@@ -73,7 +73,7 @@ const Profile = () => {
           </View>
           <View className="w-full items-center justify-center">
             <Image
-              source={images.profile}
+              source={driver?.photo || images.profile}
               className="w-[115px] h-[115px] my-4 rounded-xl border-2"
               resizeMode="contain"
             />
@@ -107,7 +107,7 @@ const Profile = () => {
                 />
                 <Label
                   title="Email"
-                  value={driver?.email}
+                  value={driver?.vehicleNumber}
                   otherStyles={"mb-4"}
                 />
 

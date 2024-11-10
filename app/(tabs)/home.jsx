@@ -32,8 +32,6 @@ const Home = () => {
     fetchUser();
   }, []);
 
-  console.log(rides);
-
   return (
     <SafeAreaView className="w-full h-full ">
       <ScrollView

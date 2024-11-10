@@ -2,7 +2,6 @@ import {
   View,
   Text,
   ScrollView,
-  Image,
   Alert,
   KeyboardAvoidingView,
   TouchableOpacity,
@@ -12,7 +11,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import FormField from "../../components/FormField";
 import CustomButton from "../../components/CustomButton";
-import { images } from "../../constants";
 import axios from "axios";
 import { router } from "expo-router";
 import { useGlobalContext } from "../../context/GlobalContext";
@@ -42,7 +40,7 @@ const otp = () => {
     await AsyncStorage.setItem("verified", "false");
     router.push("/otp");
 
-    setIsSubmitting(true);
+    setisSubmitting(true);
     try {
       const res = await axios.post("http://localhost:5050/driver/auth", {
         phoneNumber: `${token}`,

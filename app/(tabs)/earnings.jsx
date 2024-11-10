@@ -1,5 +1,6 @@
+import { useFocusEffect } from "@react-navigation/native";
 import { View, Text, ScrollView, Image, RefreshControl } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -11,6 +12,7 @@ import { Redirect } from "expo-router";
 const Earnings = () => {
   const [earnings, setEarnings] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+
   const fetchUser = async () => {
     const ph = await AsyncStorage.getItem("phoneNumber");
     if (!ph) {
@@ -20,9 +22,11 @@ const Earnings = () => {
     setEarnings(res.earnings);
   };
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchUser();
+    }, [])
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -59,7 +63,6 @@ const Earnings = () => {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             data={earnings}
-            // keyExtractor={(trip) => trip.tripID || trip.tripId} // Adjust based on your data
             renderItem={({ item }) => <EarningCard earnings={item} />}
           />
         </>
