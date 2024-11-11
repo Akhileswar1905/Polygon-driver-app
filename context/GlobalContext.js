@@ -19,7 +19,7 @@ const GlobalProvider = ({ children }) => {
           const res = await axios.get(
             `https://polygon-project.onrender.com/driver/${phoneNumber}`
           );
-          setUser(res.data.driver);
+          setUser(res.data?.driver);
           setIsLoggedIn(true);
         } else {
           setUser(null);

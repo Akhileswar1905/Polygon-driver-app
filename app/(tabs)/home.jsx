@@ -11,10 +11,14 @@ const Home = () => {
   const [rides, setRides] = useState([]);
   const [earnings, setEarnings] = useState([]);
   const [trips, setTrips] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [isRedirect, setIsRedirect] = useState(false);
+
   const fetchUser = async () => {
     const ph = await AsyncStorage.getItem("phoneNumber");
     if (!ph) {
-      <Redirect href={"/"} />;
+      setIsRedirect(true);
+      return;
     }
     const res = await getUser(ph);
     const { formattedTrips, formattedEarnings } = formatTripsAndEarnings(
@@ -27,19 +31,28 @@ const Home = () => {
       setRides(formattedTrips);
     }
   };
+
   useEffect(() => {
     setTrips(null);
     fetchUser();
   }, []);
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setTrips(null);
+    await fetchUser();
+    setRefreshing(false);
+  };
+
+  if (isRedirect) {
+    return <Redirect href="/" />;
+  }
+
   return (
-    <SafeAreaView className="w-full h-full ">
+    <SafeAreaView className="w-full h-full">
       <ScrollView
         refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={() => setRides(fetchUser)}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
         <View className="w-full px-6 my-6 space-y-2 justify-between flex-row items-center">
@@ -61,10 +74,10 @@ const Home = () => {
             </Text>
           ) : null}
           <BarChart
-            frontColor={`#1171ba`}
+            frontColor="#1171ba"
             barBorderRadius={5}
             barMarginBottom={5}
-            data={earnings ? earnings : []}
+            data={earnings || []}
             onPress={(value) => {
               setTrips(value);
             }}
@@ -72,8 +85,8 @@ const Home = () => {
         </View>
         <View>
           <BarChart
-            data={rides ? rides : []}
-            frontColor={`#1171ba`}
+            data={rides || []}
+            frontColor="#1171ba"
             barBorderRadius={5}
             barMarginBottom={5}
           />
